@@ -18,24 +18,18 @@ var conf config.Config
 var addr = flag.String("addr", "api.gemini.com", "ws service address")
 
 type Message struct {
-	Id          int     `json:"eventId"`
-	Type        string  `json:type` // I only want to look at `update` type
+	ID          int     `json:"eventID"`
+	Type        string  `json:"type"` // I only want to look at `update` type
 	Events      []Event `json:"events"`
-	Timestampms int     `json:timestampms`
+	Timestampms int     `json:"timestampms"`
 }
 
 type Event struct {
 	Type      string `json:"type"` // I only want to look at `trade` type
 	Price     string `json:"price"`
 	Amount    string `json:"amount"`
-	MakerSide string `json:"makerSide"`
+	MakerSIDe string `json:"makerSIDe"`
 }
-
-// const (
-// 	MyDB     = "oaktree"
-// 	username = ""
-// 	password = ""
-// )
 
 func main() {
 	conf = config.LoadConfiguration("./configs.yaml")
@@ -53,15 +47,15 @@ func main() {
 	// Create a new HTTPClient
 	ic, err := client.NewHTTPClient(client.HTTPConfig{
 		Addr:     "http://localhost:8086",
-		Username: username,
-		Password: password,
+		Username: conf.Db.Username,
+		Password: conf.Db.Password,
 	})
 	if err != nil {
 		log.Fatal(err)
 	}
 	// Create a new point batch
 	bp, err := client.NewBatchPoints(client.BatchPointsConfig{
-		Database:  MyDB,
+		Database:  conf.Db.Name,
 		Precision: "s",
 	})
 	if err != nil {
@@ -110,7 +104,7 @@ func main() {
 				}
 
 				bp, err = client.NewBatchPoints(client.BatchPointsConfig{
-					Database:  MyDB,
+					Database:  conf.Db.Name,
 					Precision: "s",
 				})
 				if err != nil {
@@ -124,6 +118,7 @@ func main() {
 				"price":  tm.Price,
 				"amount": tm.Amount,
 			}
+			log.Printf("Price: " + tm.Price + ", Amount: " + tm.Amount)
 			pt, err := client.NewPoint("trades", nil, fields, time.Now())
 			if err != nil {
 				log.Fatal(err)

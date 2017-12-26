@@ -7,13 +7,13 @@ import (
 )
 
 type Config struct {
-	Coins []Coin
+	Db DB
 }
 
-type Coin struct {
-	Ticker string
-	Cost   float64
-	Units  float64
+type DB struct {
+	Name     string
+	Username string
+	Password string
 }
 
 func LoadConfiguration(file string) Config {
