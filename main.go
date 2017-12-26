@@ -33,6 +33,9 @@ type Event struct {
 }
 
 func main() {
+	var price float64
+	var amt float64
+
 	conf = config.LoadConfiguration("./configs.yaml")
 	events := make(chan Event)
 
@@ -115,9 +118,12 @@ func main() {
 
 		// Add into points
 		case tm := <-events:
+			price, _ = strconv.ParseFloat(tm.Price, 64)
+			amt, _ = strconv.ParseFloat(tm.Amount, 64)
+
 			fields := map[string]interface{}{
-				"price":  strconv.ParseFloat(tm.Price, 64),
-				"amount": strconv.ParseFloat(tm.Amount, 64),
+				"price":  price,
+				"amount": amt,
 			}
 			log.Printf("Price: " + tm.Price + ", Amount: " + tm.Amount)
 			pt, err := client.NewPoint("trades", nil, fields, time.Now())
