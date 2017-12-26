@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"os"
 	"os/signal"
+	"strconv"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -115,8 +116,8 @@ func main() {
 		// Add into points
 		case tm := <-events:
 			fields := map[string]interface{}{
-				"price":  tm.Price,
-				"amount": tm.Amount,
+				"price":  strconv.ParseFloat(tm.Price, 64),
+				"amount": strconv.ParseFloat(tm.Amount, 64),
 			}
 			log.Printf("Price: " + tm.Price + ", Amount: " + tm.Amount)
 			pt, err := client.NewPoint("trades", nil, fields, time.Now())
